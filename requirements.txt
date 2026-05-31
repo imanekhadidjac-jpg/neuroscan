@@ -1,0 +1,10 @@
+Flask
+Flask-SQLAlchemy
+gunicorn
+tensorflow
+opencv-python
+numpy
+Pillow
+matplotlib
+shap
+scikit-learn

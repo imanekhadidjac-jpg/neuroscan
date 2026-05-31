@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="login-page">
+
+    <!-- LEFT -->
+    <div class="login-left">
+
+        <div class="auth-container card">
+
+            <div class="auth-header">
+
+                <h2>Create Account</h2>
+
+                <p class="text-muted">
+                    Register to access the Alzheimer Detection System
+                </p>
+
+            </div>
+
+            <form method="POST" action="{{ url_for('signup') }}">
+
+                <div class="form-group">
+                    <label>Full Name</label>
+
+                    <input type="text" name="name" class="form-control" placeholder="Dr. John Smith" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Username</label>
+
+                    <input type="text" name="username" class="form-control" placeholder="Enter your username" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+
+                    <input type="email" name="email" class="form-control" placeholder="doctor@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+
+                    <input type="text" name="phone" class="form-control" placeholder="+213 555 00 00 00" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Hospital / Location</label>
+
+                    <input type="text" name="location" class="form-control" placeholder="Setif University Hospital"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+
+                    <input type="password" name="password" class="form-control" placeholder="Create a strong password"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm Password</label>
+
+                    <input type="password" name="confirm_password" class="form-control"
+                        placeholder="Confirm your password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary login-btn">
+
+                    Sign Up
+
+                </button>
+
+            </form>
+
+            <div class="text-center mt-4">
+
+                <p class="text-muted">
+
+                    Already have an account?
+
+                    <a href="{{ url_for('login') }}" style="color:#0d6efd;
+                              font-weight:600;
+                              text-decoration:none;">
+
+                        Login
+
+                    </a>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+
+
+</div>
+
+{% endblock %}

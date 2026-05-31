@@ -1,0 +1,263 @@
+{% extends "layout_admin.html" %}
+
+{% block page_title %}Doctors Management{% endblock %}
+{% block page_subtitle %}Manage registered medical professionals{% endblock %}
+
+{% block head %}
+<style>
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th,
+    td {
+        padding: 18px 20px;
+        text-align: left;
+        border-bottom: 1px solid #1e293b;
+    }
+
+    th {
+        color: #94a3b8;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+    }
+
+    tr {
+        transition: 0.3s;
+    }
+
+    tr:hover {
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .doctor-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .doctor-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #1e293b;
+        color: #3b82f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid #3b82f6;
+    }
+
+    .doctor-name {
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .action-btn {
+        padding: 8px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.3s;
+        display: inline-block;
+    }
+
+    .edit-btn {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        margin-right: 8px;
+    }
+
+    .edit-btn:hover {
+        background: rgba(59, 130, 246, 0.2);
+    }
+
+    .delete-btn {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+
+    .delete-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+    }
+
+    .add-btn {
+        background: #3b82f6;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+        display: inline-block;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    .add-btn:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+
+    .search-admin {
+    margin: 25px 0;
+}
+
+   .search-admin input {
+       width: 100%;
+
+       background: #0f172a;
+
+       border: 1px solid #334155;
+
+       color: white;
+
+       padding: 14px 20px;
+
+       border-radius: 12px;
+
+       font-size: 15px;
+
+       transition: 0.3s;
+    }
+
+    .search-admin input:focus {
+
+       outline: none;
+
+       border-color: #3b82f6;
+
+       box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="table-header">
+        <h2 style="font-size: 20px; font-weight: 600;">Registered Doctors</h2>
+        <a href="#" class="add-btn">+ Add Doctor</a>
+    </div>
+    <div class="search-admin">
+
+        <input type="text" id="doctorSearch" placeholder="Search doctor...">
+        <!--<input type="text" id="doctorSearch"placeholder="🔍 Search doctor by name or username...">-->
+    </div>
+   
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Doctor Profile</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for doctor in doctors %}
+                <tr>
+
+                    <td>#{{ doctor.id }}</td>
+
+                    <td>
+                        <div class="doctor-info">
+
+                            <div class="doctor-avatar">
+                                {{ doctor.name[0] }}
+                            </div>
+
+                            <div class="doctor-name">
+                                {{ doctor.name }}
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td>{{ doctor.username }}</td>
+
+                    <td>
+                        <span style="
+            color: #10b981;
+            background: rgba(16,185,129,0.1);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        ">
+                            Active
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <a href="/edit_doctor/{{ doctor.id }}" class="action-btn edit-btn">
+                            Edit
+                        </a>
+                        <!--<a href="#" class="action-btn delete-btn">Delete</a>-->
+                        <a href="/delete_doctor/{{ doctor.id }}" class="action-btn delete-btn">
+                            Delete
+                        </a>
+                    </td>
+
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<script>
+
+    document.getElementById("doctorSearch").addEventListener("keyup", function () {
+    
+        let value = this.value.toLowerCase();
+    
+        let rows = document.querySelectorAll("tbody tr");
+    
+        rows.forEach(function(row) {
+    
+            let text = row.innerText.toLowerCase();
+    
+            if(text.includes(value)) {
+    
+                row.style.display = "";
+    
+            } 
+            
+            else {
+    
+                row.style.display = "none";
+            }
+    
+        });
+    
+    });
+    
+    </script>
+
+
+{% endblock %}

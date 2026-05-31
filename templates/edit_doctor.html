@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Edit Doctor</title>
+</head>
+
+<body style="background:#0f172a;color:white;font-family:Arial;padding:40px;">
+
+    <h1>Edit Doctor</h1>
+
+    <form method="POST">
+
+        <input type="text" name="name" value="{{ doctor.name }}" placeholder="Name"
+            style="padding:10px;width:300px;margin-bottom:15px;">
+
+        <br>
+
+        <input type="text" name="username" value="{{ doctor.username }}" placeholder="Username"
+            style="padding:10px;width:300px;margin-bottom:15px;">
+
+        <br>
+
+        <button type="submit" style="padding:10px 20px;background:#3b82f6;color:white;border:none;border-radius:8px;">
+            Save
+        </button>
+        <a href="{{ url_for('edit_patient', patient_id=patient.id) }}"
+            class="btn btn-primary"
+            style="padding:0.3rem 0.8rem; font-size:0.9em; margin-left:5px;">
+
+                Edit
+
+        </a>
+    </form>
+
+</body>
+
+</html>

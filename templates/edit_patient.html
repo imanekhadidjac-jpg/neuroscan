@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="card auth-container">
+
+    <h2 style="margin-bottom:20px;">
+        Edit Patient
+    </h2>
+
+    <form method="POST">
+
+        <div class="form-group">
+            <label>First Name</label>
+
+            <input type="text"
+            name="first_name"
+            class="form-control"
+            value="{{ patient.first_name }}"
+            required>
+        </div>
+
+        <div class="form-group">
+            <label>Last Name</label>
+
+            <input type="text"
+            name="last_name"
+            class="form-control"
+            value="{{ patient.last_name }}"
+            required>
+        </div>
+
+        <div class="form-group">
+            <label>Age</label>
+
+            <input type="number"
+            name="age"
+            class="form-control"
+            value="{{ patient.age }}"
+            required>
+        </div>
+
+        <div class="form-group">
+
+            <label>Gender</label>
+
+            <select name="gender"
+            class="form-control">
+
+                <option value="Male"
+                {% if patient.gender == "Male" %}
+                selected
+                {% endif %}>
+
+                    Male
+
+                </option>
+
+                <option value="Female"
+                {% if patient.gender == "Female" %}
+                selected
+                {% endif %}>
+
+                    Female
+
+                </option>
+
+            </select>
+
+        </div>
+
+        <button type="submit"
+        class="btn btn-primary"
+        style="width:100%;">
+
+            Save Changes
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

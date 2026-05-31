@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="patient-header">
+    <div>
+        <h2>Diagnostic Results: {{ patient.first_name }} {{ patient.last_name }}</h2>
+        <p class="text-muted">Analysis Date: {{ visit.date.strftime('%Y-%m-%d %H:%M') }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('patient_view', patient_id=patient.id) }}" class="btn btn-outline">Back to Patient</a>
+        <a href="{{ url_for('generate_report', visit_id=visit.id) }}" target="_blank" class="btn btn-primary ml-2">📄
+            Download PDF Report</a>
+    </div>
+</div>
+
+<div class="card mb-4 text-center">
+    <h3 style="color: var(--text-dark);">AI Prediction</h3>
+    <div style="margin: 1.5rem 0;">
+        <span
+            style="font-size: 2.5rem; font-weight: 700; color: {% if visit.prediction == 'NonDemented' %}var(--success){% elif visit.prediction == 'VeryMildDemented' %}#ffc107{% else %}var(--danger){% endif %};">
+            {{ visit.prediction }}
+        </span>
+    </div>
+    <p style="font-size: 1.2rem; color: var(--text-muted);">Confidence Score: <strong>{{ visit.confidence }}%</strong>
+    </p>
+</div>
+
+<h3 class="mb-4">Explainable AI (XAI) Analysis</h3>
+
+<div class="results-grid">
+
+    <!-- Original MRI -->
+    <div class="card result-image-card">
+
+        <h3>Original MRI</h3>
+
+        <img src="{{ url_for('static', filename=visit.image_path) }}">
+
+        <p>
+            Preprocessed MRI image used as input for the deep learning model.
+        </p>
+
+    </div>
+
+    <!-- GradCAM -->
+    <div class="card result-image-card">
+
+        <h3>Grad-CAM</h3>
+
+        {% if visit.gradcam_path %}
+
+        <img src="{{ url_for('static', filename=visit.gradcam_path) }}">
+
+        {% else %}
+
+        <p>GradCAM not available</p>
+
+        {% endif %}
+
+        <p>
+            Highlights the brain regions used by the AI model.
+        </p>
+
+    </div>
+
+    <!-- SHAP -->
+    <div class="card result-image-card">
+
+        <h3>SHAP Values</h3>
+
+        {% if visit.shap_path %}
+
+        <img src="{{ url_for('static', filename=visit.shap_path) }}">
+
+        {% else %}
+
+        <p>SHAP not available</p>
+
+        {% endif %}
+
+        <p>
+            Explainability visualization of model predictions.
+        </p>
+
+    </div>
+
+</div>
+
+<div class="text-center mt-4">
+
+    <a href="{{ url_for('generate_gradcam', visit_id=visit.id) }}" class="btn btn-warning">
+        🔥 Generate GradCAM
+    </a>
+
+    <a href="{{ url_for('generate_shap', visit_id=visit.id) }}" class="btn btn-danger">
+        🔥 Generate SHAP
+    </a>
+
+</div>
+
+{% endblock %}

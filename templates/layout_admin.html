@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroScan AI - Admin Dashboard</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+
+        body {
+            background-color: #0f172a;
+            color: white;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background-color: #111827;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            transition: 0.3s;
+        }
+
+        .logo h2 {
+            color: #3b82f6;
+            margin-bottom: 40px;
+            text-align: center;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .menu li {
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            display: block;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu a:hover,
+        .menu li.active a {
+            background-color: #1e293b;
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .menu li.logout {
+            margin-top: auto;
+        }
+
+        .menu li.logout a:hover {
+            color: #ef4444;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 30px 40px;
+            transition: 0.3s;
+            width: calc(100% - 260px);
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .topbar h1 {
+            font-size: 30px;
+            font-weight: 600;
+        }
+
+        .topbar p {
+            color: #94a3b8;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #111827;
+            padding: 8px 15px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* CARDS */
+        .card {
+            background: #111827;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* RESPONSIVE */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+
+        .admin-icons {
+            position: relative;
+            margin-right: 20px;
+        }
+
+        .notif-box {
+            position: relative;
+            font-size: 22px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .notif-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+
+            background: red;
+            color: white;
+
+            width: 18px;
+            height: 18px;
+
+            border-radius: 50%;
+
+            font-size: 11px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notif-dropdown {
+            position: absolute;
+
+            top: 35px;
+            right: 0;
+
+            width: 260px;
+
+            background: #1e293b;
+
+            border-radius: 12px;
+
+            padding: 15px;
+
+            display: none;
+
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+            z-index: 999;
+        }
+
+        .notif-box:hover .notif-dropdown {
+            display: block;
+        }
+
+        .notif-dropdown h4 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .notif-dropdown a {
+            display: block;
+
+            color: #cbd5e1;
+
+            text-decoration: none;
+
+            padding: 10px 0;
+
+            border-bottom: 1px solid #334155;
+
+            transition: 0.3s;
+        }
+
+        .notif-dropdown a:hover {
+            color: #3b82f6;
+        }
+
+        @media(max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                width: 100%;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+        }
+
+        @media(max-width: 576px) {
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .admin-profile {
+                align-self: flex-end;
+            }
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <h2>🧠 NeuroScan AI</h2>
+        </div>
+        <ul class="menu">
+            <li class="{% if request.path == '/admin/dashboard' %}active{% endif %}">
+                <!--<a href="/admin/dashboard">📊 Dashboard</a>-->
+
+                <a href="/admin/dashboard">📊 Dashboard</a>
+            </li>
+
+            <li class="{% if request.path == '/admin/doctors' %}active{% endif %}">
+                <a href="/admin/doctors">👨‍⚕️ Doctors</a>
+            </li>
+
+            <li class="{% if request.path == '/admin/analytics' %}active{% endif %}">
+                <a href="/admin/analytics">📈 Analytics</a>
+            </li>
+
+            <li class="{% if request.path == '/admin/settings' %}active{% endif %}">
+                <a href="/admin/settings">⚙️ Settings</a>
+            </li>
+            <li class="logout">
+                <a href="/logout">🚪 Logout</a>
+            </li>
+            <li class="{% if request.path == '/admin/profile' %}active{% endif %}">
+                <a href="/admin/profile">
+                    👤 Profile
+                </a>
+            </li>
+            <li class="{% if request.path == '/admin/messages' %}active{% endif %}">
+                <a href="/admin/messages">
+                    💬 Messages
+                </a>
+            </li>
+            <li class="{% if request.path == '/admin/history' %}active{% endif %}">
+                <a href="/admin/history">
+                    🕘 History
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="topbar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="mobile-toggle"
+                    onclick="document.getElementById('sidebar').classList.toggle('show')">☰</button>
+                <div>
+                    <h1>{% block page_title %}Admin Dashboard{% endblock %}</h1>
+                    <p>{% block page_subtitle %}Alzheimer AI Monitoring System{% endblock %}</p>
+                </div>
+            </div>
+            <div class="admin-icons">
+
+                <div class="notif-box">
+
+                    🔔
+
+                    <span class="notif-count">
+                        3
+                    </span>
+
+                    <div class="notif-dropdown">
+
+                        <h4>Notifications</h4>
+
+                        <a href="#">
+                            New doctor registered
+                        </a>
+
+                        <a href="#">
+                            SHAP generated successfully
+                        </a>
+
+                        <a href="#">
+                            New MRI uploaded
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="admin-profile">
+
+                <div class="profile-dropdown">
+
+                    <div class="profile-btn">
+
+                        <span>
+                            Admin
+                        </span>
+
+                        <div class="avatar">
+                            A
+                        </div>
+
+                    </div>
+
+                    <div class="profile-menu">
+
+                        <a href="/admin/profile">
+                            👤 My Profile
+                        </a>
+
+                        <a href="/admin/settings">
+                            ⚙️ Settings
+                        </a>
+
+                        <a href="/admin/history">
+                            🕘 History
+                        </a>
+
+                        <a href="/admin/messages">
+                            💬 Messages
+                        </a>
+
+                        <a href="/logout" class="logout-link">
+                            🚪 Logout
+                        </a>
+
+                    </div>
+
+                </div>
+                <style>
+                    .profile-dropdown {
+                        position: relative;
+                    }
+
+                    .profile-btn {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+
+                        cursor: pointer;
+
+                        background: #111827;
+
+                        padding: 10px 16px;
+
+                        border-radius: 30px;
+
+                        transition: 0.3s;
+                    }
+
+                    .profile-btn:hover {
+                        background: #1e293b;
+                    }
+
+                    .profile-menu {
+                        position: absolute;
+
+                        top: 60px;
+                        right: 0;
+
+                        width: 230px;
+
+                        background: #1e293b;
+
+                        border-radius: 15px;
+
+                        padding: 12px;
+
+                        display: none;
+
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+                        z-index: 999;
+                    }
+
+                    .profile-dropdown:hover .profile-menu {
+                        display: block;
+                    }
+
+                    .profile-menu a {
+                        display: block;
+
+                        color: #e2e8f0;
+
+                        text-decoration: none;
+
+                        padding: 12px;
+
+                        border-radius: 10px;
+
+                        transition: 0.3s;
+
+                        margin-bottom: 5px;
+                    }
+
+                    .profile-menu a:hover {
+                        background: #334155;
+
+                        color: #3b82f6;
+
+                        transform: translateX(3px);
+                    }
+
+                    .logout-link:hover {
+                        color: #ef4444 !important;
+                    }
+                </style>
+            </div>
+        </div>
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

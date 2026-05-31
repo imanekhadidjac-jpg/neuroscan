@@ -1,0 +1,97 @@
+{% extends "layout_admin.html" %}
+
+{% block content %}
+
+<div class="card">
+
+    <h2 style="
+    margin-bottom:25px;
+    color:white;
+    ">
+        📩 Doctors Messages
+    </h2>
+
+    {% if messages %}
+
+        {% for msg in messages %}
+
+        <div class="message-card">
+
+            <h3>
+                Dr. {{ msg.doctor_name }}
+            </h3>
+
+            <h4>
+                {{ msg.subject }}
+            </h4>
+
+            <p>
+                {{ msg.content }}
+            </p>
+
+            <small>
+                {{ msg.date.strftime('%d/%m/%Y %H:%M') }}
+            </small>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p style="color:white;">
+            No messages found.
+        </p>
+
+    {% endif %}
+
+</div>
+
+<style>
+
+.message-card{
+
+    background:#0f172a;
+
+    padding:25px;
+
+    border-radius:20px;
+
+    margin-bottom:20px;
+
+    border-left:5px solid #3b82f6;
+
+    color:white;
+}
+
+.message-card h3{
+
+    color:#60a5fa;
+
+    margin-bottom:10px;
+}
+
+.message-card h4{
+
+    color:white;
+
+    margin-bottom:15px;
+}
+
+.message-card p{
+
+    color:#cbd5e1;
+
+    line-height:1.8;
+
+    margin-bottom:15px;
+}
+
+.message-card small{
+
+    color:#94a3b8;
+}
+
+</style>
+
+{% endblock %}

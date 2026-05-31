@@ -1,0 +1,455 @@
+{% extends "layout_admin.html" %}
+
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Overview & AI Statistics{% endblock %}
+
+{% block head %}
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 25px;
+        margin-bottom: 35px;
+    }
+
+    .stat-card {
+        border-left: 5px solid #3b82f6;
+    }
+
+    .stat-card.online {
+        border-left-color: #10b981;
+    }
+
+    .stat-card h3 {
+        color: #94a3b8;
+        font-size: 15px;
+        font-weight: 500;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-card h1 {
+        font-size: 36px;
+        color: white;
+        font-weight: bold;
+    }
+
+    .online h1 {
+        color: #10b981;
+    }
+
+    .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 25px;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .chart-header {
+        font-size: 18px;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 10px;
+    }
+
+    .admin-welcome-card {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        padding: 35px;
+
+        margin-bottom: 30px;
+
+        background: linear-gradient(135deg,
+                #1e3a8a,
+                #2563eb);
+
+        border-radius: 25px;
+
+        overflow: hidden;
+    }
+
+    .welcome-left h1 {
+        color: white;
+
+        font-size: 38px;
+
+        margin-bottom: 15px;
+    }
+
+    .welcome-left p {
+        color: #dbeafe;
+
+        max-width: 600px;
+
+        line-height: 1.8;
+
+        font-size: 16px;
+    }
+
+    .admin-profile-circle {
+        width: 130px;
+        height: 130px;
+
+        border-radius: 50%;
+
+        overflow: hidden;
+
+        border: 5px solid rgba(255, 255, 255, 0.3);
+
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+
+    @media(max-width: 992px) {
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- WELCOME ADMIN -->
+
+<div class="card admin-welcome-card">
+
+    <div class="welcome-left">
+
+        <h1>
+            <!--Welcome Back, Admin 👋-->
+        </h1>
+        <h2 style="
+        margin-bottom:20px;
+        font-size:28px;
+        font-weight:bold;
+        ">
+
+          Welcome 👋 {{ session.admin }}
+
+        </h2>
+        <p>
+            Monitor doctors, AI predictions, SHAP explanations,
+            MRI analyses and system activities in real time.
+        </p>
+
+    </div>
+
+
+
+</div>
+
+
+<!-- STATS -->
+<div class="stats-grid">
+    <div class="card stat-card">
+        <h3>Total Doctors</h3>
+        <h1>{{ doctors_count }}</h1>
+    </div>
+
+    <div class="card stat-card">
+        <h3>Total Analyses</h3>
+        <h1>{{ patients_count }}</h1>
+    </div>
+
+    <div class="card stat-card">
+        <h3>AI Predictions</h3>
+        <h1>{{ visits_count }}</h1>
+    </div>
+
+    <div class="card stat-card online">
+        <h3>System Status</h3>
+        <h1>Online</h1>
+    </div>
+</div>
+
+<!-- CHARTS -->
+<div class="charts-grid">
+    <div class="card">
+        <div class="chart-header">Weekly Analyses Overview</div>
+        <div class="chart-container">
+            <canvas id="analysisChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="chart-header">Prediction Distribution</div>
+        <div class="chart-container">
+            <canvas id="predictionChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 30px;">
+        <h2 style="margin-bottom:20px;">Registered Doctors</h2>
+
+        {% for doctor in doctors %}
+        <div style="
+        background:#1e293b;
+        padding:15px;
+        border-radius:10px;
+        margin-bottom:10px;
+    ">
+            <h3>{{ doctor.name }}</h3>
+            <p>{{ doctor.username }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+
+<div class="card" style="margin-top:30px;">
+
+    <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    ">
+
+        <h2>
+            🔔 System Notifications
+        </h2>
+
+        <span style="
+        background:#2563eb;
+        color:white;
+        padding:6px 14px;
+        border-radius:20px;
+        font-size:13px;
+        ">
+
+            Live Activity
+
+        </span>
+
+    </div>
+
+    {% for item in history[:5] %}
+
+    <div class="notification-card">
+
+        <div class="notif-icon">
+
+            ⚡
+
+        </div>
+
+        <div class="notif-content">
+
+            <h3>
+
+                {{ item.action }}
+
+            </h3>
+
+            <p>
+
+                {{ item.details }}
+
+            </p>
+
+            <small>
+
+                {{ item.date.strftime('%d %b %Y - %H:%M') }}
+
+            </small>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+
+
+<style>
+
+.notification-card{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:18px;
+
+    background:#0f172a;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    margin-bottom:18px;
+
+    transition:0.3s;
+
+    border-left:4px solid #3b82f6;
+}
+
+.notification-card:hover{
+
+    transform:translateY(-3px);
+
+    background:#111c31;
+}
+
+.notif-icon{
+
+    width:50px;
+    height:50px;
+
+    border-radius:15px;
+
+    background:#2563eb;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:24px;
+
+    color:white;
+
+    flex-shrink:0;
+}
+
+.notif-content h3{
+
+    color:white;
+
+    margin-bottom:6px;
+
+    font-size:17px;
+}
+
+.notif-content p{
+
+    color:#cbd5e1;
+
+    line-height:1.7;
+
+    margin-bottom:8px;
+}
+
+.notif-content small{
+
+    color:#64748b;
+}
+
+</style>
+
+
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+
+    // ANALYSIS CHART
+    const ctx1 = document.getElementById('analysisChart').getContext('2d');
+
+    // Gradient for Bar Chart
+    const gradientBar = ctx1.createLinearGradient(0, 0, 0, 400);
+    gradientBar.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
+    gradientBar.addColorStop(1, 'rgba(59, 130, 246, 0.2)');
+
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'MRI Analyses',
+                data: [12, 19, 15, 25, 22, 10, 8],
+                backgroundColor: gradientBar,
+                borderColor: '#3b82f6',
+                borderWidth: 1,
+                borderRadius: 8,
+                barPercentage: 0.6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1e293b',
+                    titleColor: '#fff',
+                    bodyColor: '#cbd5e1',
+                    padding: 10,
+                    cornerRadius: 8,
+                    displayColors: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+
+    // PREDICTION CHART
+    const ctx2 = document.getElementById('predictionChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: ['Non Demented', 'Very Mild', 'Mild', 'Moderate'],
+            datasets: [{
+                data: [45, 30, 15, 10],
+                backgroundColor: [
+                    '#10b981', // Green
+                    '#f59e0b', // Yellow
+                    '#f97316', // Orange
+                    '#ef4444'  // Red
+                ],
+                borderWidth: 0,
+                hoverOffset: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#1e293b',
+                    padding: 10,
+                    cornerRadius: 8
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

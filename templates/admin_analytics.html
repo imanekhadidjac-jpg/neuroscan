@@ -1,0 +1,121 @@
+{% extends "layout_admin.html" %}
+
+{% block page_title %}Analytics{% endblock %}
+{% block page_subtitle %}In-depth performance and AI metrics{% endblock %}
+
+{% block head %}
+<style>
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+    @media(max-width: 992px) {
+        .analytics-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+        margin-top: 15px;
+    }
+    .chart-header {
+        font-size: 18px;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 5px;
+    }
+    .chart-desc {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-grid">
+    <div class="card">
+        <div class="chart-header">Monthly Scans</div>
+        <div class="chart-desc">Total MRI scans processed over the year</div>
+        <div class="chart-container">
+            <canvas id="monthlyChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="chart-header">Accuracy Trends</div>
+        <div class="chart-desc">AI confidence scores over time</div>
+        <div class="chart-container">
+            <canvas id="accuracyChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+
+    // MONTHLY CHART
+    const ctx1 = document.getElementById('monthlyChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Scans',
+                data: [45, 52, 38, 65, 80, 72],
+                borderColor: '#8b5cf6',
+                backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#8b5cf6',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ACCURACY CHART
+    const ctx2 = document.getElementById('accuracyChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [{
+                label: 'Confidence (%)',
+                data: [92, 94, 91, 95],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#10b981',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { min: 80, max: 100, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+</script>
+{% endblock %}

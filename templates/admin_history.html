@@ -1,0 +1,46 @@
+{% extends "layout_admin.html" %}
+
+{% block page_title %}
+History
+{% endblock %}
+
+{% block page_subtitle %}
+System activity logs
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+    <h2 style="margin-bottom:20px;">
+        Admin Activity Logs
+    </h2>
+
+    {% for item in history %}
+
+    <div style="
+        background:#1e293b;
+        padding:18px;
+        border-radius:12px;
+        margin-bottom:15px;
+    ">
+
+        <h3 style="color:#3b82f6;">
+            {{ item.action }}
+        </h3>
+
+        <p style="margin-top:8px;">
+            {{ item.details }}
+        </p>
+
+        <small style="color:gray;">
+            {{ item.date }}
+        </small>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,376 @@
+{% extends "layout_admin.html" %}
+
+{% block page_title %}Settings{% endblock %}
+{% block page_subtitle %}System configurations and preferences{% endblock %}
+
+{% block head %}
+<style>
+    .settings-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+
+    @media(max-width: 992px) {
+        .settings-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .settings-group {
+        margin-bottom: 25px;
+    }
+
+    .settings-group h3 {
+        font-size: 18px;
+        color: #e2e8f0;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #1e293b;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #cbd5e1;
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        color: white;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .toggle-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        background: #1e293b;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .toggle-label {
+        font-size: 15px;
+        color: #e2e8f0;
+    }
+
+    .toggle-desc {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 4px;
+    }
+
+    /* Switch CSS */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #334155;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked+.slider {
+        background-color: #3b82f6;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(24px);
+    }
+
+    .save-btn {
+        background: #3b82f6;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .save-btn:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-grid">
+    <div class="card">
+        <div class="settings-group">
+            <h3>Platform Configuration</h3>
+
+            <div class="form-group">
+                <label>Platform Name</label>
+                <input type="text" value="NeuroScan AI">
+            </div>
+
+            <div class="form-group">
+                <label>Support Email</label>
+                <input type="email" value="admin@neuroscan.ai">
+            </div>
+
+            <div class="form-group">
+                <label>Timezone</label>
+                <select>
+                    <option>UTC (Coordinated Universal Time)</option>
+                    <option>GMT (Greenwich Mean Time)</option>
+                    <option>EST (Eastern Standard Time)</option>
+                    <option>PST (Pacific Standard Time)</option>
+                </select>
+            
+            </div>
+
+            <div class="form-group">
+                <label>Platform Language</label>
+
+                <select id="languageSelect"
+                    onchange="changeLanguage()">
+
+                    <option value="en">English</option>
+
+                    <option value="fr">Français</option>
+
+                    <option value="ar">العربية</option>
+
+                </select>
+           </div>
+
+        </div>
+
+        <button class="save-btn"onclick="saveSettings()">Save Configurations</button>
+    </div>
+
+    <div class="card">
+        <div class="settings-group">
+            <h3>AI Engine & Security</h3>
+
+            <div class="toggle-container">
+                <div>
+                    <div class="toggle-label">Auto-generate SHAP Explanations</div>
+                    <div class="toggle-desc">Automatically create explanations for every scan</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-container">
+                <div>
+                    <div class="toggle-label">Two-Factor Authentication</div>
+                    <div class="toggle-desc">Require 2FA for all admin accounts</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-container">
+                <div>
+                    <div class="toggle-label">Maintenance Mode</div>
+                    <div class="toggle-desc">Disable access for standard users</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        <div class="toggle-container">
+
+            <div>
+
+                <div class="toggle-label">
+                    Auto-generate GradCAM
+                </div>
+
+                <div class="toggle-desc">
+                    Generate GradCAM heatmaps automatically
+                </div>
+
+            </div>
+
+            <label class="switch">
+
+                <input type="checkbox" checked>
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+
+
+
+
+        <button class="save-btn" onclick="saveSecuritySettings()">Apply Security Settings</button>
+    </div>
+</div>
+<div id="successMessage"
+style="
+display:none;
+position:fixed;
+top:20px;
+right:20px;
+background:#22c55e;
+color:white;
+padding:15px 25px;
+border-radius:12px;
+z-index:9999;
+font-weight:600;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+">
+
+    Settings Saved Successfully
+
+</div>
+
+<script>
+
+function changeLanguage(){
+
+    let lang =
+    document.getElementById("languageSelect").value;
+
+    localStorage.setItem("language", lang);
+
+    location.reload();
+}
+
+window.onload = function(){
+
+    let lang =
+    localStorage.getItem("language") || "en";
+
+    document.getElementById("languageSelect").value = lang;
+
+    applyLanguage(lang);
+}
+
+document.querySelector('input[type="text"]').value =
+localStorage.getItem("platform_name") || "NeuroScan AI";
+
+document.querySelector('input[type="email"]').value =
+localStorage.getItem("support_email") || "admin@neuroscan.ai";
+
+
+function applyLanguage(lang){
+
+    if(lang === "fr"){
+
+        document.querySelector(".page-title").innerHTML =
+        "Paramètres";
+
+    }
+
+    else if(lang === "ar"){
+
+        document.querySelector(".page-title").innerHTML =
+        "الإعدادات";
+
+    }
+
+    else{
+
+        document.querySelector(".page-title").innerHTML =
+        "Settings";
+    }
+}
+
+
+function saveSettings(){
+
+    let platform =
+    document.querySelector('input[type="text"]').value;
+
+    let email =
+    document.querySelector('input[type="email"]').value;
+
+    let language =
+    document.getElementById("languageSelect").value;
+
+    localStorage.setItem("platform_name", platform);
+
+    localStorage.setItem("support_email", email);
+
+    localStorage.setItem("language", language);
+
+    alert("Settings Saved Successfully !");
+}
+
+function saveSecuritySettings(){
+
+    let msg =
+    document.getElementById("successMessage");
+
+    msg.style.display = "block";
+
+    setTimeout(() => {
+
+        msg.style.display = "none";
+
+    }, 3000);
+}
+
+</script>
+
+
+
+{% endblock %}

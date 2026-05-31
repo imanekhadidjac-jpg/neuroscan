@@ -1,0 +1,67 @@
+<div class="card help-video">
+
+    <h2>
+        🎥 How To Use NeuroScan AI
+    </h2>
+
+    <video controls width="100%" class="tutorial-video">
+
+        <source src="{{ url_for('static', filename='videos/tutorial.mp4') }}" type="video/mp4">
+
+    </video>
+
+    <div class="help-text">
+
+        <h3>
+            About SHAP & Grad-CAM
+        </h3>
+    
+        <p>
+            SHAP explains which MRI features influenced the AI prediction.
+            It helps doctors understand why the model predicted Alzheimer’s disease.
+        </p>
+    
+        <p>
+            Grad-CAM highlights important brain regions directly on the MRI image.
+            The colored heatmap shows the areas most relevant to the AI decision.
+        </p>
+    
+        <p>
+            These Explainable AI techniques improve transparency, trust,
+            and medical interpretation of deep learning predictions.
+        </p>
+    
+    </div>
+
+</div>
+<style>
+    .help-video {
+        margin-top: 30px;
+    }
+
+    .tutorial-video {
+        margin-top: 20px;
+
+        border-radius: 20px;
+
+        overflow: hidden;
+    }
+
+
+
+    .help-text {
+
+    margin-top: 25px;
+
+    line-height: 1.9;
+
+    color: #475569;
+    }
+
+   .help-text h3 {
+
+   margin-bottom: 15px;
+
+   color: #0f172a;
+   }
+</style>
